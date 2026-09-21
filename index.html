@@ -27,6 +27,9 @@
     .location p { margin: 5px 0 14px; }
     .small { font-size: 12px; color: #687786; }
     .hidden { display: none; }
+    .intent-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
+    .intent-grid button { background: #eaf1fb; color: #1555ae; }
+    .intent-grid button.active { background: #1c65d1; color: #fff; }
   </style>
 </head>
 <body>
@@ -34,15 +37,20 @@
     <section class="card" aria-labelledby="title">
       <div class="brand">Cars24</div>
       <h1>Leave a review for your Cars24 location</h1>
-      <p>We will help you find the nearest location. Please choose the branch you visited before opening Google’s review form.</p>
+      <p>Choose the service you used, then we will help you find the nearest eligible location. Please confirm the branch you visited before opening Google’s review form.</p>
 
-      <button id="locate" class="primary" type="button">Use my location</button>
+      <div class="intent-grid" role="group" aria-label="Choose review type">
+        <button id="buy-intent" type="button">I bought a car</button>
+        <button id="sell-intent" type="button">I sold a car</button>
+      </div>
+
+      <button id="locate" class="primary" type="button" disabled>Use my location</button>
       <div id="status" class="status" role="status" aria-live="polite"></div>
 
       <label for="search">Or search for your branch</label>
-      <input id="search" type="search" placeholder="Search city, area, or branch name" autocomplete="off">
+      <input id="search" type="search" placeholder="Choose buy or sell first" autocomplete="off" disabled>
       <label for="branch">Select a location</label>
-      <select id="branch" aria-label="Cars24 location"></select>
+      <select id="branch" aria-label="Cars24 location" disabled><option value="">Choose buy or sell first</option></select>
 
       <div id="selected" class="location hidden">
         <h2 id="selected-name"></h2>
@@ -9176,7 +9184,11 @@
 ];
 </script>
   <script>
-    const locations = (window.CARS24_LOCATIONS || []).filter((x) => x.reviewUrl && Number.isFinite(x.lat) && Number.isFinite(x.lng));
+    const allLocations = (window.CARS24_LOCATIONS || []).filter((x) => x.reviewUrl && Number.isFinite(x.lat) && Number.isFinite(x.lng));
+    const buyPrefixes = ['C1/'];
+    const sellPrefixes = ['A1/', 'A2/', 'A3/', 'B1/', 'D2/'];
+    let locations = [];
+    let intent = null;
     const branchSelect = document.querySelector('#branch');
     const search = document.querySelector('#search');
     const status = document.querySelector('#status');
@@ -9208,7 +9220,25 @@
         ? { item: x, distance: distanceKm(lat, lng, x.lat, x.lng) } : best, null);
     }
 
-    renderOptions(locations.slice().sort((a, b) => label(a).localeCompare(label(b))));
+    function matchesIntent(x) {
+      const code = String(x.storeCode || '').toUpperCase();
+      const prefixes = intent === 'buy' ? buyPrefixes : sellPrefixes;
+      return prefixes.some((prefix) => code.startsWith(prefix));
+    }
+
+    function setIntent(nextIntent) {
+      intent = nextIntent;
+      locations = allLocations.filter(matchesIntent);
+      document.querySelector('#buy-intent').classList.toggle('active', intent === 'buy');
+      document.querySelector('#sell-intent').classList.toggle('active', intent === 'sell');
+      document.querySelector('#locate').disabled = locations.length === 0;
+      search.disabled = locations.length === 0;
+      search.placeholder = intent === 'buy' ? 'Search C1 city, area, or branch' : 'Search sell-car city, area, or branch';
+      status.textContent = `${locations.length} eligible location${locations.length === 1 ? '' : 's'} available. Choose your branch or use your location.`;
+      renderOptions(locations.slice().sort((a, b) => label(a).localeCompare(label(b))));
+      selected.classList.add('hidden');
+    }
+
     search.addEventListener('input', () => {
       const q = search.value.trim().toLowerCase();
       renderOptions(locations.filter((x) => `${x.name} ${x.address} ${x.city} ${x.state}`.toLowerCase().includes(q)).slice(0, 200));
@@ -9217,6 +9247,8 @@
       const index = Number(branchSelect.value);
       if (branchSelect.value !== '') showLocation(visibleLocations[index]);
     });
+    document.querySelector('#buy-intent').addEventListener('click', () => setIntent('buy'));
+    document.querySelector('#sell-intent').addEventListener('click', () => setIntent('sell'));
     document.querySelector('#locate').addEventListener('click', () => {
       if (!navigator.geolocation) { status.textContent = 'Location is unavailable. Please search for your branch instead.'; return; }
       status.textContent = 'Finding the nearest Cars24 location…';
