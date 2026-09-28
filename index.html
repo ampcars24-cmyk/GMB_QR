@@ -9199,6 +9199,7 @@
     const selected = document.querySelector('#selected');
     let visibleLocations = locations;
     let active = null;
+    let locationRequested = false;
 
     function label(x) { return `${x.name} — ${x.city || x.state}`; }
     function renderOptions(items) {
@@ -9244,6 +9245,28 @@
       status.textContent = `${locations.length} eligible location${locations.length === 1 ? '' : 's'} available. Choose your branch or use your location.`;
       renderOptions(locations.slice().sort((a, b) => label(a).localeCompare(label(b))));
       selected.classList.add('hidden');
+      requestNearestLocation();
+    }
+
+    function requestNearestLocation() {
+      if (!intent || locationRequested) return;
+      locationRequested = true;
+      if (!navigator.geolocation) {
+        status.textContent = 'Location is unavailable. Please search for your branch instead.';
+        return;
+      }
+      status.textContent = 'Finding your nearest eligible Cars24 location...';
+      navigator.geolocation.getCurrentPosition((pos) => {
+        const result = nearest(pos.coords.latitude, pos.coords.longitude);
+        if (!result) {
+          status.textContent = 'No eligible location was found. Please search for your branch.';
+          return;
+        }
+        showLocation(result.item);
+        status.textContent = `Nearest location found, approximately ${result.distance.toFixed(1)} km away. Please confirm it is the branch you visited.`;
+      }, () => {
+        status.textContent = 'Location permission was not available. Please search for your branch instead.';
+      }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 });
     }
 
     search.addEventListener('input', () => {
@@ -9257,14 +9280,8 @@
     document.querySelector('#buy-intent').addEventListener('click', () => setIntent('buy'));
     document.querySelector('#sell-intent').addEventListener('click', () => setIntent('sell'));
     document.querySelector('#locate').addEventListener('click', () => {
-      if (!navigator.geolocation) { status.textContent = 'Location is unavailable. Please search for your branch instead.'; return; }
-      status.textContent = 'Finding the nearest Cars24 location…';
-      navigator.geolocation.getCurrentPosition((pos) => {
-        const result = nearest(pos.coords.latitude, pos.coords.longitude);
-        if (!result) { status.textContent = 'No review-enabled locations were found. Please search for your branch.'; return; }
-        showLocation(result.item);
-        status.textContent = `Nearest location found, approximately ${result.distance.toFixed(1)} km away. Please confirm it is the branch you visited.`;
-      }, () => { status.textContent = 'Location permission was not granted. Please search for your branch instead.'; }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 });
+      locationRequested = false;
+      requestNearestLocation();
     });
     document.querySelector('#review').addEventListener('click', () => { if (active) window.location.href = active.reviewUrl; });
   </script>
