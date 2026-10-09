@@ -6868,6 +6868,7 @@
 ];
 </script>
   <script>
+    const TRACKING_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxnI7-qph5LIdr_hEB22awr3ZiGRSc1iryr34jJpbH0Q4Atln1s9E718dTLdKyanK1WMg/exec';
     const excludedReviewUrls = new Set([
       "https://search.google.com/local/writereview?placeid=ChIJ2V0t9SgVrjsRgyoEPG9Kprc",
       "https://search.google.com/local/writereview?placeid=ChIJc6mtPPtnUjoRFq0kHJXx7kk",
@@ -6899,6 +6900,7 @@
     const allLocations = (window.CARS24_LOCATIONS || []).filter((x) => x.reviewUrl && !excludedReviewUrls.has(x.reviewUrl) && Number.isFinite(x.lat) && Number.isFinite(x.lng));
     let locations = [];
     let intent = null;
+    const scanEventId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
     const branchSelect = document.querySelector('#branch');
     const search = document.querySelector('#search');
     const status = document.querySelector('#status');
@@ -6906,6 +6908,20 @@
     let visibleLocations = locations;
     let active = null;
     let locationRequested = false;
+
+    function sendScanPostback() {
+      const payload = JSON.stringify({
+        eventId: scanEventId,
+        eventType: 'scan',
+        occurredAt: new Date().toISOString(),
+        page: window.location.href,
+        referrer: document.referrer || ''
+      });
+      try {
+        if (navigator.sendBeacon && navigator.sendBeacon(TRACKING_ENDPOINT, new Blob([payload], { type: 'text/plain;charset=UTF-8' }))) return;
+        fetch(TRACKING_ENDPOINT, { method: 'POST', body: payload, keepalive: true, mode: 'no-cors' }).catch(() => {});
+      } catch (_) { /* Scan tracking must never block the review flow. */ }
+    }
     function label(x) { return `${x.name} — ${x.city || x.state}`; }
     function renderOptions(items) {
       visibleLocations = items;
@@ -6988,6 +7004,7 @@
       requestNearestLocation();
     });
     document.querySelector('#review').addEventListener('click', () => { if (active) window.location.href = active.reviewUrl; });
+    sendScanPostback();
   </script>
 </body>
 </html>
