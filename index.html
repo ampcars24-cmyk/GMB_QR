@@ -3,64 +3,96 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Cars24 Reviews</title>
-  <meta name="description" content="Find the nearest Cars24 location and leave a genuine Google review.">
+  <title>Share your Cars24 experience</title>
+  <meta name="description" content="Find the Cars24 location you visited and share an honest Google review.">
   <style>
-    :root { color-scheme: light; font-family: Arial, sans-serif; }
+    :root { color-scheme: light; font-family: Arial, sans-serif; --blue: #3036f5; --ink: #152238; --muted: #627083; --line: #e4eaf2; --soft: #f5f7ff; }
     * { box-sizing: border-box; }
-    body { margin: 0; background: #f5f7fa; color: #17202a; }
-    main { max-width: 560px; margin: 0 auto; padding: 28px 18px 48px; }
-    .card { background: #fff; border: 1px solid #e1e7ee; border-radius: 16px; padding: 24px; box-shadow: 0 8px 28px rgba(17, 35, 54, .08); }
-    .brand { font-size: 13px; font-weight: 700; letter-spacing: .12em; color: #1c65d1; text-transform: uppercase; }
-    h1 { margin: 10px 0 8px; font-size: 28px; line-height: 1.15; }
-    p { line-height: 1.5; color: #52606d; }
+    body { margin: 0; background: linear-gradient(145deg, #eef1ff 0%, #f8fbff 52%, #eef8ff 100%); color: var(--ink); }
+    main { max-width: 620px; margin: 0 auto; padding: 18px 16px 46px; }
+    .card { overflow: hidden; background: #fff; border: 1px solid rgba(48, 54, 245, .12); border-radius: 24px; box-shadow: 0 18px 48px rgba(28, 43, 86, .14); }
+    .hero { position: relative; padding: 20px 22px 24px; background: var(--blue); color: #fff; }
+    .hero::after { content: ''; position: absolute; width: 150px; height: 150px; right: -42px; top: -48px; border: 22px solid rgba(255,255,255,.12); border-radius: 50%; }
+    .hero::before { content: ''; position: absolute; width: 70px; height: 70px; right: 68px; bottom: -36px; border: 12px solid rgba(255,255,255,.10); border-radius: 50%; }
+    .logo-frame { position: relative; z-index: 1; width: 170px; height: 60px; padding: 4px 8px; overflow: hidden; border: 1px solid rgba(255,255,255,.28); border-radius: 14px; background: var(--blue); }
+    .logo { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; transform: scale(1.08); }
+    .hero h1 { position: relative; z-index: 1; max-width: 450px; margin: 22px 0 8px; font-size: clamp(28px, 7vw, 38px); line-height: 1.04; letter-spacing: -.03em; }
+    .hero p { position: relative; z-index: 1; max-width: 480px; margin: 0; color: rgba(255,255,255,.84); line-height: 1.5; }
+    .content { padding: 22px; }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0 0 22px; }
+    .step { min-height: 92px; padding: 12px 8px; text-align: center; border: 1px solid var(--line); border-radius: 15px; background: #fbfcff; }
+    .step-icon { display: grid; place-items: center; width: 34px; height: 34px; margin: 0 auto 8px; border-radius: 11px; background: #e8eaff; color: var(--blue); }
+    .step-icon svg { width: 19px; height: 19px; }
+    .step strong { display: block; font-size: 12px; }
+    .step span { display: block; margin-top: 3px; color: var(--muted); font-size: 11px; line-height: 1.25; }
+    h2 { margin: 0 0 6px; font-size: 20px; }
+    .intro { margin: 0 0 16px; color: var(--muted); line-height: 1.5; }
     label { display: block; margin: 18px 0 7px; font-weight: 700; font-size: 14px; }
     input, select, button { width: 100%; min-height: 46px; border-radius: 9px; font: inherit; }
-    input, select { border: 1px solid #cbd5df; padding: 10px 12px; background: #fff; }
-    button { border: 0; padding: 11px 14px; cursor: pointer; font-weight: 700; }
-    button.primary { background: #1c65d1; color: #fff; }
+    input, select { border: 1px solid #cbd5df; padding: 10px 12px; background: #fff; color: var(--ink); }
+    button { border: 0; padding: 11px 14px; cursor: pointer; font-weight: 700; transition: transform .15s ease, box-shadow .15s ease, background .15s ease; }
+    button:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 7px 16px rgba(48,54,245,.16); }
+    button.primary { background: var(--blue); color: #fff; }
     button.secondary { margin-top: 10px; background: #eaf1fb; color: #1555ae; }
     button:disabled { cursor: not-allowed; opacity: .55; }
-    .status { margin: 16px 0 0; min-height: 24px; color: #52606d; font-size: 14px; }
-    .location { margin-top: 20px; padding: 16px; border: 1px solid #b8d1f4; border-radius: 12px; background: #f4f8ff; }
+    .status { margin: 16px 0 0; min-height: 24px; color: var(--muted); font-size: 14px; }
+    .location { margin-top: 20px; padding: 16px; border: 1px solid #b8d1f4; border-radius: 16px; background: #f4f8ff; }
     .location h2 { margin: 0 0 6px; font-size: 18px; }
     .location p { margin: 5px 0 14px; }
-    .review-qr { display: block; width: min(72vw, 300px); height: min(72vw, 300px); margin: 16px auto; border: 8px solid #fff; border-radius: 10px; box-shadow: 0 4px 16px rgba(17, 35, 54, .12); image-rendering: pixelated; }
-    .qr-caption { text-align: center; font-weight: 700; color: #17202a; }
+    .review-qr { display: block; width: min(72vw, 300px); height: min(72vw, 300px); margin: 16px auto; border: 8px solid #fff; border-radius: 14px; box-shadow: 0 4px 16px rgba(17, 35, 54, .12); image-rendering: pixelated; }
+    .qr-caption { text-align: center; font-weight: 700; color: var(--ink); }
     .small { font-size: 12px; color: #687786; }
     .hidden { display: none; }
     .intent-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
-    .intent-grid button { background: #eaf1fb; color: #1555ae; }
-    .intent-grid button.active { background: #1c65d1; color: #fff; }
+    .intent-grid button { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 58px; background: #f1f3ff; color: #3340b9; border: 1px solid #dfe3ff; }
+    .intent-grid button.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .intent-icon { width: 21px; height: 21px; }
+    .note { display: flex; gap: 9px; align-items: flex-start; margin-top: 18px; padding: 12px 13px; border-radius: 13px; background: #fff8e5; color: #715517; font-size: 12px; line-height: 1.4; }
+    .note svg { flex: 0 0 auto; width: 17px; height: 17px; margin-top: 1px; }
+    @media (max-width: 420px) { .content { padding: 18px; } .hero { padding: 18px 18px 22px; } .steps { gap: 6px; } .step { padding-inline: 4px; } }
   </style>
 </head>
 <body>
   <main>
     <section class="card" aria-labelledby="title">
-      <div class="brand">Cars24</div>
-      <h1>Leave a review for your Cars24 location</h1>
-      <p>Choose the service you used, then we will help you find the nearest eligible location. Please confirm the branch you visited before opening Google’s review form.</p>
+      <header class="hero">
+        <div class="logo-frame"><img class="logo" src="../assets/cars24-logo.jpg" alt="Cars24"></div>
+        <h1 id="title">Your experience matters.</h1>
+        <p>Help future customers make a confident choice by sharing an honest review of the Cars24 location you visited.</p>
+      </header>
+      <div class="content">
+        <div class="steps" aria-label="Review steps">
+          <div class="step"><div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-6.1 7-12A7 7 0 1 0 5 9c0 5.9 7 12 7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg></div><strong>Choose</strong><span>Buy or sell</span></div>
+          <div class="step"><div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4M11 8v6M8 11h6"/></svg></div><strong>Find</strong><span>Your branch</span></div>
+          <div class="step"><div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M9 7h6M9 17h6M10 11h4"/></svg></div><strong>Share</strong><span>Your feedback</span></div>
+        </div>
 
-      <div class="intent-grid" role="group" aria-label="Choose review type">
-        <button id="buy-intent" type="button">I bought a car</button>
-        <button id="sell-intent" type="button">I sold a car</button>
-      </div>
+        <h2>How was your Cars24 experience?</h2>
+        <p class="intro">Select the service you used. We’ll help you find the nearest eligible location and open the correct Google review link.</p>
 
-      <button id="locate" class="primary" type="button" disabled>Use my location</button>
-      <div id="status" class="status" role="status" aria-live="polite"></div>
+        <div class="intent-grid" role="group" aria-label="Choose review type">
+          <button id="buy-intent" type="button"><svg class="intent-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M5 12l1.5-5h11L19 12M6 12v5h12v-5M8 17v2M16 17v2"/><circle cx="8" cy="14" r="1"/><circle cx="16" cy="14" r="1"/></svg>I bought a car</button>
+          <button id="sell-intent" type="button"><svg class="intent-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14h16M6 14l1.5-5h9L19 14M6 14v4h12v-4M8 18v2M16 18v2"/><path d="M12 4v6M9 7l3-3 3 3"/></svg>I sold a car</button>
+        </div>
 
-      <label for="search">Or search for your branch</label>
-      <input id="search" type="search" placeholder="Choose buy or sell first" autocomplete="off" disabled>
-      <label for="branch">Select a location</label>
-      <select id="branch" aria-label="Cars24 location" disabled><option value="">Choose buy or sell first</option></select>
+        <button id="locate" class="primary" type="button" disabled>Find my nearest location</button>
+        <div id="status" class="status" role="status" aria-live="polite"></div>
 
-      <div id="selected" class="location hidden">
-        <h2 id="selected-name"></h2>
-        <p id="selected-address"></p>
-        <p class="qr-caption">Scan this branch review QR</p>
-        <img id="review-qr" class="review-qr" alt="Selected Cars24 branch review QR code">
-        <button id="review" class="primary" type="button">Open Google review form</button>
-        <p class="small">Please share an honest review based on your genuine experience at this location.</p>
+        <label for="search">Or search for your branch</label>
+        <input id="search" type="search" placeholder="Choose buy or sell first" autocomplete="off" disabled>
+        <label for="branch">Select a location</label>
+        <select id="branch" aria-label="Cars24 location" disabled><option value="">Choose buy or sell first</option></select>
+
+        <div class="note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3 4 6v5c0 5 3.4 8.5 8 10 4.6-1.5 8-5 8-10V6l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg><span>Please select the branch you actually visited and share genuine feedback. Your review helps us improve.</span></div>
+
+        <div id="selected" class="location hidden">
+          <h2 id="selected-name"></h2>
+          <p id="selected-address"></p>
+          <p class="qr-caption">Scan to review this branch</p>
+          <img id="review-qr" class="review-qr" alt="Selected Cars24 branch review QR code">
+          <button id="review" class="primary" type="button">Continue to Google Reviews</button>
+          <p class="small">Thank you for taking a moment to share your genuine experience.</p>
+        </div>
       </div>
     </section>
   </main>
@@ -1760,13 +1792,13 @@
   {
     "storeCode": "C1/2521",
     "code": "C1",
-    "intent": "buy",
-    "name": "Cars24 - Buy, Sell Used Cars in Mathura Road, Agra",
-    "address": "Khasra Number 631, 632, 635 to 639, Guru Ka Taal, Near Synergy Plus Hospital, Kakretha, Mustkil, Agra, Uttar Pradesh",
+    "intent": "sell",
+    "name": "Cars24 - Sell Used Cars in Sikandra, Agra",
+    "address": "Sikandara, Agra, Uttar Pradesh",
     "city": "Agra",
     "state": "Uttar Pradesh",
-    "lat": 27.2108392,
-    "lng": 77.9649871,
+    "lat": 27.220722,
+    "lng": 77.927965,
     "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJP2diLHOHczkRKi3JokSCaIQ"
   },
   {
@@ -4290,15 +4322,15 @@
     "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJ9z0iQ2V5AjoRPQf6EHRrMK0"
   },
   {
-    "storeCode": "B2/286",
-    "code": "D2",
-    "intent": "sell",
-    "name": "Cars24 - Sell Used Cars in Agra",
-    "address": "NH-2, 646, Karkaita Road, opposite to Synergy Plus Hospital, Sikandra, Agra, Uttar Pradesh",
+    "storeCode": "C1/286",
+    "code": "C1",
+    "intent": "buy",
+    "name": "Cars24 - Buy, Sell Used Cars in Mathura Road, Agra",
+    "address": "Khasra Number 631, 632, 635 to 639, Guru Ka Taal, Near Synergy Plus Hospital, Kakretha, Mustkil, Agra, Uttar Pradesh",
     "city": "Agra",
     "state": "Uttar Pradesh",
-    "lat": 27.2201796,
-    "lng": 77.918749,
+    "lat": 27.210856,
+    "lng": 77.964952,
     "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJNcfUzQZ3dDkRlO4Mgmsc-i4"
   },
   {
@@ -5718,15 +5750,15 @@
     "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJfT6hSao9rjsRQr4X5r9DrfE"
   },
   {
-    "storeCode": "D2/434",
-    "code": "D2",
+    "storeCode": "C1/434",
+    "code": "C1",
     "intent": "buy",
-    "name": "Cars24 - Sell Used Cars in Thaltej - Silaj Road, Ahmedabad",
-    "address": "Ahmedabad, Ahmedabad, Ahmedabad, Gujarat",
-    "city": "Ahmedabad",
+    "name": "Cars24 - Buy, Sell Used Cars in Akshar Party, Rajkot",
+    "address": "Survey No. 43, A/5-10, Final Plot No. 41 to 53 Behind Akshar Party LawnNear, Ayodhya Chowk, Bus Stand, 150 Feet Ring Road, Sheetal Park, Madhapar, Rajkot, Gujarat",
+    "city": "Rajkot",
     "state": "Gujarat",
-    "lat": 22.2880223,
-    "lng": 70.7690114,
+    "lat": 22.3245731,
+    "lng": 70.7691779,
     "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJc7VnGJbLWTkRITlKcmXg-gg"
   },
   {
@@ -6340,11 +6372,534 @@
     "lat": 28.6261797,
     "lng": 77.2057731,
     "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJ4-HW6OUDDTkRx8eAW1XZFws"
+  },
+  {
+    "storeCode": "D2/376",
+    "code": "D2",
+    "intent": "sell",
+    "name": "Cars24 - Sell Used Cars in Guntur",
+    "address": "Guntur, Guntur, Guntur, Andhra Pradesh",
+    "city": "Guntur",
+    "state": "Andhra Pradesh",
+    "lat": 16.293513,
+    "lng": 80.4410587,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJUxH07g11SjoRFoPRoNpAhPc"
+  },
+  {
+    "storeCode": "D2/111",
+    "code": "D2",
+    "intent": "sell",
+    "name": "Cars24 - Sell Used Cars in Ahmedabad",
+    "address": "Ahmedabad, Ahmedabad, Ahmedabad, Gujarat",
+    "city": "Ahmedabad",
+    "state": "Gujarat",
+    "lat": 23.074268,
+    "lng": 72.5257867,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJlS9KeFyDXjkRJiADtqUQHIg"
+  },
+  {
+    "storeCode": "08899532305920635920",
+    "code": "08899532305920635920",
+    "intent": "sell",
+    "name": "Cars24 Sell Used Cars In Rajkot ,Gujarat",
+    "address": "360003, Railnagar Main Road, Railnagar, Rajkot, Gujarat",
+    "city": "Rajkot",
+    "state": "Gujarat",
+    "lat": 22.3361641,
+    "lng": 70.7851512,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJG0KXMgDJWTkRy10-1aa46o8"
+  },
+  {
+    "storeCode": "A3/574",
+    "code": "A3",
+    "intent": "sell",
+    "name": "Cars24 - Sell Used Cars in Kasaragod",
+    "address": "Kasaragod, Kasaragod, Kasaragod, Kerala",
+    "city": "Kasaragod",
+    "state": "Kerala",
+    "lat": 12.5067568,
+    "lng": 74.9927631,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJBWydJqaDpDsR5Z6ozQBoMrk"
+  },
+  {
+    "storeCode": "B1/114",
+    "code": "B1",
+    "intent": "sell",
+    "name": "Cars24 - Sell Used Cars in Mumbai",
+    "address": "Shop No.1/2, 144, Gulistan Building, Swami Vivekananda Rd, Khar west, SV Road, Mumbai, Maharashtra",
+    "city": "Mumbai",
+    "state": "Maharashtra",
+    "lat": 19.073243,
+    "lng": 72.8373548,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJ02b94kPJ5zsRXDtykWG4znw"
+  },
+  {
+    "storeCode": "A3/385",
+    "code": "A3",
+    "intent": "sell",
+    "name": "Cars24 - Sell Used Cars in Pune",
+    "address": "Pune, Pune, Pune, Maharashtra",
+    "city": "Pune",
+    "state": "Maharashtra",
+    "lat": 18.6212221,
+    "lng": 73.8512265,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJtwpe57jHwjsRjuRhDMF6Heo"
+  },
+  {
+    "storeCode": "A3/507",
+    "code": "A3",
+    "intent": "sell",
+    "name": "Cars24 - Sell Used Cars in Rajkot",
+    "address": "Rajkot, Rajkot, Rajkot, Gujarat",
+    "city": "Rajkot",
+    "state": "Gujarat",
+    "lat": 22.3051476,
+    "lng": 70.7681589,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJqaQeqWPJWTkRasG8MeCUJaM"
+  },
+  {
+    "storeCode": "00443972046631519098",
+    "code": "00443972046631519098",
+    "intent": "sell",
+    "name": "Cars24 Sell Used Cars In Karnataka",
+    "address": "Next to Nexa, Shree Mahaveer Oil Mill Compound, 9443+R7J, Tumkur-Sira Road, Bengaluru, Karnataka",
+    "city": "Bengaluru",
+    "state": "Karnataka",
+    "lat": 13.3570777,
+    "lng": 77.1031503,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJ8fkZJx8tsDsR1Fg5jO8A4tw"
+  },
+  {
+    "storeCode": "17311989670753922182",
+    "code": "17311989670753922182",
+    "intent": "sell",
+    "name": "Cars24 - Sell Used Car in Vasant Colony, Sangli",
+    "address": "Vasant Colony, Sangli, Sangli Miraj Kupwad, Sangli, Maharashtra",
+    "city": "Sangli",
+    "state": "Maharashtra",
+    "lat": 16.8551036,
+    "lng": 74.5823141,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJP0oc8JIZwTsRtMggZtTxy1E"
+  },
+  {
+    "storeCode": "02898399251234979154",
+    "code": "02898399251234979154",
+    "intent": "sell",
+    "name": "Cars24 - Sell Used Cars in Coimbatore",
+    "address": "245, 4th Street, Muthukumar Nagar, Rathinapuri, Coimbatore, Tamil Nadu",
+    "city": "Coimbatore",
+    "state": "Tamil Nadu",
+    "lat": 11.0263152,
+    "lng": 76.9680003,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJqWGvi29ZqDsRz27u4hpzgfE"
+  },
+  {
+    "storeCode": "11582379729079476230",
+    "code": "11582379729079476230",
+    "intent": "sell",
+    "name": "Cars24 Farmhouse",
+    "address": "Dera Village, Dera Mandi, New Delhi, Delhi",
+    "city": "New Delhi",
+    "state": "Delhi",
+    "lat": 28.4458753,
+    "lng": 77.1726434,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJD9DqDb0fDTkRihdL39foQGk"
+  },
+  {
+    "storeCode": "A2/104",
+    "code": "A2",
+    "intent": "sell",
+    "name": "Cars24 - Sell Used Cars in Asansol",
+    "address": "Das Motor, NH-2, Asansol Bypass, Asansol, West Bengal",
+    "city": "Asansol",
+    "state": "West Bengal",
+    "lat": 23.7058453,
+    "lng": 86.9156887,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJc18xUQ0f9zkR1_Hpld948rI"
+  },
+  {
+    "storeCode": "01429664910301591319",
+    "code": "01429664910301591319",
+    "intent": "sell",
+    "name": "Cars24 - Sell Used Cars in Ghaziabad",
+    "address": "Sikrod, Ghaziabad, Uttar Pradesh",
+    "city": "Ghaziabad",
+    "state": "Uttar Pradesh",
+    "lat": 28.709623,
+    "lng": 77.4538424,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJE9IZEwDxDDkRc5mCkkN6QJA"
+  },
+  {
+    "storeCode": "11550616725843287913",
+    "code": "11550616725843287913",
+    "intent": "sell",
+    "name": "Cars24 Sell used cars In Mayapuri, Delhi",
+    "address": "Ground floor, C, Maruti suzuki Arena, 99, Mayapuri Industrial Area Phase II, Near, New Delhi, Delhi",
+    "city": "New Delhi",
+    "state": "Delhi",
+    "lat": 28.6232033,
+    "lng": 77.1183928,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJgRH0BVwDDTkRizvCo4UjAY0"
+  },
+  {
+    "storeCode": "04904991850185941367",
+    "code": "04904991850185941367",
+    "intent": "sell",
+    "name": "Cars24 - Sell Used Cars in Navi Mumbai",
+    "address": "Shop No.1,2 Swastik Vrindavan, Sector-19, Airoli, Navi Mumbai, Near Andhra Bank, Mumbai, Maharashtra",
+    "city": "Mumbai",
+    "state": "Maharashtra",
+    "lat": 19.1597831,
+    "lng": 72.9910286,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJw2Vc0za55zsRx93dz1eWDKs"
+  },
+  {
+    "storeCode": "A3/360",
+    "code": "A3",
+    "intent": "sell",
+    "name": "Cars24 - Sell Used Cars in Nasik",
+    "address": "Nasik, Nasik, Nasik, Maharashtra",
+    "city": "Nasik",
+    "state": "Maharashtra",
+    "lat": 19.9773702,
+    "lng": 73.8099736,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJ406F64br3TsRSQXssFaA-D4"
+  },
+  {
+    "storeCode": "D2/284",
+    "code": "D2",
+    "intent": "sell",
+    "name": "Cars24 - Sell Used Cars in Mumbai",
+    "address": "Mumbai, Mumbai, Mumbai, Maharashtra",
+    "city": "Mumbai",
+    "state": "Maharashtra",
+    "lat": 19.2146542,
+    "lng": 72.8687511,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJJQ8zZa235zsRXxsJV2tWSjw"
+  },
+  {
+    "storeCode": "13749055751853283072",
+    "code": "13749055751853283072",
+    "intent": "sell",
+    "name": "Cars24 Sell Used Cars in Bhubaneswar, Odisha",
+    "address": "1st Floor, Nike Showroom, Plot No. 624, Janpath Road, infront of IDBI Bank, Saheed Nagar, Bhubaneswar, Odisha",
+    "city": "Bhubaneswar",
+    "state": "Odisha",
+    "lat": 20.2860007,
+    "lng": 85.8437392,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJbxr3djIJGToRN_4Alw3o1RA"
+  },
+  {
+    "storeCode": "A3/467",
+    "code": "A3",
+    "intent": "sell",
+    "name": "Cars24 - Sell Used Cars in Nagapur",
+    "address": "Ahmednagar, Ahmednagar, Nagapur, Maharashtra",
+    "city": "Nagapur",
+    "state": "Maharashtra",
+    "lat": 19.1433692,
+    "lng": 74.7138739,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJO11bYDdZ3DsRykdff7ofJbo"
+  },
+  {
+    "storeCode": "A2/142",
+    "code": "A2",
+    "intent": "sell",
+    "name": "Cars24 - Sell Used Cars in Thane",
+    "address": "Survey No. 134/135, TRINITY PARKING YARD, Ghodbunder Road, near Center Point Hotel, Thane, Maharashtra",
+    "city": "Thane",
+    "state": "Maharashtra",
+    "lat": 19.2729793,
+    "lng": 72.9136703,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJ593eY2O75zsRAUrFXUWi43E"
+  },
+  {
+    "storeCode": "A3/392",
+    "code": "A3",
+    "intent": "sell",
+    "name": "Cars24 - Sell Used Cars in Sangli",
+    "address": "Sangli, Sangli, Sangli, Maharashtra",
+    "city": "Sangli",
+    "state": "Maharashtra",
+    "lat": 16.8502665,
+    "lng": 74.5711928,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJ75cRsp4ZwTsR9Vcj86B96BQ"
+  },
+  {
+    "storeCode": "D2/362",
+    "code": "D2",
+    "intent": "sell",
+    "name": "Cars24 - Sell Used Cars in Mumbai",
+    "address": "Mumbai, Mumbai, Mumbai, Maharashtra",
+    "city": "Mumbai",
+    "state": "Maharashtra",
+    "lat": 19.7931873,
+    "lng": 72.7582803,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJ-8SGhMcf5zsR9BS5nP7rfzY"
+  },
+  {
+    "storeCode": "D2/317",
+    "code": "D2",
+    "intent": "sell",
+    "name": "Cars24 - Sell Used Cars in New Delhi",
+    "address": "Kirti Nagar, Delhi, New Delhi, Delhi",
+    "city": "New Delhi",
+    "state": "Delhi",
+    "lat": 28.649604,
+    "lng": 77.1432708,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJ5RHKV60DDTkRUhbUSz39hsc"
+  },
+  {
+    "storeCode": "D2/374",
+    "code": "D2",
+    "intent": "sell",
+    "name": "Cars24 - Sell Used Cars in Patiala",
+    "address": "Patiala, Patiala, Patiala, Punjab",
+    "city": "Patiala",
+    "state": "Punjab",
+    "lat": 30.346252,
+    "lng": 76.4425971,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJh2NWn_UpEDkRJRVouxi2sAo"
+  },
+  {
+    "storeCode": "A3/616",
+    "code": "A3",
+    "intent": "sell",
+    "name": "Cars24 - Sell Used Cars in Lucknow",
+    "address": "Lucknow, Lucknow, Lucknow, Uttar Pradesh",
+    "city": "Lucknow",
+    "state": "Uttar Pradesh",
+    "lat": 26.7654549,
+    "lng": 80.9630515,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJ_WPa1D_7mzkRpaRv8JBUCSQ"
+  },
+  {
+    "storeCode": "D2/266",
+    "code": "D2",
+    "intent": "sell",
+    "name": "Cars24 - Sell Used Cars in Patiala",
+    "address": "Patiala, Patiala, Patiala, Punjab",
+    "city": "Patiala",
+    "state": "Punjab",
+    "lat": 30.3699871,
+    "lng": 76.3825024,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJKbUmMRcnEDkRINEs1l2Debo"
+  },
+  {
+    "storeCode": "A3/101",
+    "code": "A3",
+    "intent": "sell",
+    "name": "Cars24 - Sell Used Cars in Chandrapur",
+    "address": "Chandrapur, Chandrapur, Maharashtra",
+    "city": "Chandrapur",
+    "state": "Maharashtra",
+    "lat": 19.9730717,
+    "lng": 79.2992678,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJQ6k_bwvV0jsRl5DfDtHN3Mk"
+  },
+  {
+    "storeCode": "A3/435",
+    "code": "A3",
+    "intent": "sell",
+    "name": "Cars24 - Sell Used Cars in Jaipur",
+    "address": "Jaipur, Jaipur, Jaipur, Rajasthan",
+    "city": "Jaipur",
+    "state": "Rajasthan",
+    "lat": 26.8975631,
+    "lng": 75.8318803,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJrUzCyou3bTkRPHp2ptsIZ94"
+  },
+  {
+    "storeCode": "A2/144",
+    "code": "A2",
+    "intent": "sell",
+    "name": "Cars24 - Sell Used Cars in Thiruvananthapuram",
+    "address": "No. 398, 10-1/2, Ward No. 3, Attipra Village, Near Kunnil Hypermarket, Kulathoor, Thiruvananthapuram, Kerala",
+    "city": "Thiruvananthapuram",
+    "state": "Kerala",
+    "lat": 8.5435473,
+    "lng": 76.8916251,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJe2WMhGW_BTsRjcVa7Em58kk"
+  },
+  {
+    "storeCode": "17359035448124565858",
+    "code": "17359035448124565858",
+    "intent": "sell",
+    "name": "Cars24 Sell Used Cars In Amritsar, Punjab",
+    "address": "NH-1GT road, Duburji, RB Tower, Opposite police line, Daburji Road, near Bank of India Land mark, Amritsar, Punjab",
+    "city": "Amritsar",
+    "state": "Punjab",
+    "lat": 31.5824704,
+    "lng": 74.9311203,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJV4orZ8d9GTkRBwFq4Xh8ulI"
+  },
+  {
+    "storeCode": "D2/265",
+    "code": "D2",
+    "intent": "sell",
+    "name": "Cars24 - Sell Used Cars in Mumbai",
+    "address": "Mumbai, Mumbai, Mumbai, Maharashtra",
+    "city": "Mumbai",
+    "state": "Maharashtra",
+    "lat": 19.2188237,
+    "lng": 72.852306,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJp38d_cfJ5zsRdyN_EzWZyII"
+  },
+  {
+    "storeCode": "16997330601610253585",
+    "code": "16997330601610253585",
+    "intent": "sell",
+    "name": "Cars24 Sell Used Cars In Chennai, Tamil Nadu",
+    "address": "SPS Complex, QQX2+9VM, Kailash Nagar, Tiruchirappalli, Tamil Nadu",
+    "city": "Tiruchirappalli",
+    "state": "Tamil Nadu",
+    "lat": 10.7984834,
+    "lng": 78.7521557,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJ2-hvat3zqjsR6HN-pYkis9s"
+  },
+  {
+    "storeCode": "A3/432",
+    "code": "A3",
+    "intent": "sell",
+    "name": "Cars24 - Sell Used Cars in Chitradurga",
+    "address": "Chitradurga, Chitradurga, Chitradurga, Karnataka",
+    "city": "Chitradurga",
+    "state": "Karnataka",
+    "lat": 14.2268186,
+    "lng": 76.3650448,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJvXcvgjN1ujsRdlGz9XhdjpE"
+  },
+  {
+    "storeCode": "D2/167",
+    "code": "D2",
+    "intent": "sell",
+    "name": "Cars24 - Sell Used Cars in Akola",
+    "address": "Akola, Akola, Akola, Maharashtra",
+    "city": "Akola",
+    "state": "Maharashtra",
+    "lat": 20.7060908,
+    "lng": 77.0123617,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJdVKlUTUv1zsR4C4uC7OWY8M"
+  },
+  {
+    "storeCode": "17738372308826775566",
+    "code": "17738372308826775566",
+    "intent": "sell",
+    "name": "Cars24 Sell Used Cars in Bengaluru",
+    "address": "14, Mahatma Gandhi Road, near Central Mall, Bengaluru, Karnataka",
+    "city": "Bengaluru",
+    "state": "Karnataka",
+    "lat": 12.9715978,
+    "lng": 77.5945738,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJe1Tw2swXrjsR2QYt-NBR3Mc"
+  },
+  {
+    "storeCode": "D2/380",
+    "code": "D2",
+    "intent": "sell",
+    "name": "Cars24 - Sell Used Cars in Agra",
+    "address": "Khandari, Agra, Uttar Pradesh",
+    "city": "Agra",
+    "state": "Uttar Pradesh",
+    "lat": 27.2207221,
+    "lng": 77.9300366,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJv67gsMN3dDkRH5sCQdZtAb4"
+  },
+  {
+    "storeCode": "06642021911134736536",
+    "code": "06642021911134736536",
+    "intent": "sell",
+    "name": "Cars24 Sell Used Cars in Gomti Nagar, Lucknow",
+    "address": "V265+XC3, Vibhuti Khand, Gomti Nagar, Lucknow, Uttar Pradesh",
+    "city": "Lucknow",
+    "state": "Uttar Pradesh",
+    "lat": 26.86238,
+    "lng": 81.0085513,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJ2yG2FQDjmzkRs8T6DFHy_RA"
+  },
+  {
+    "storeCode": "A3/423",
+    "code": "A3",
+    "intent": "sell",
+    "name": "Cars24 - Sell Used Cars in Jaipur",
+    "address": "Jaipur, Jaipur, Jaipur, Rajasthan",
+    "city": "Jaipur",
+    "state": "Rajasthan",
+    "lat": 26.8897616,
+    "lng": 75.7533647,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJk7JvneK1bTkRSlg45NZrTA4"
+  },
+  {
+    "storeCode": "13195053133508004523",
+    "code": "13195053133508004523",
+    "intent": "sell",
+    "name": "Cars24 Sell Used Cars in Kothrud",
+    "address": "Shri Suvarna, Utsav Mangal Karyalaya, behind Kinara Hotel, Paud Road, Lokmanya Colony, Kothrud, Pune, Maharashtra",
+    "city": "Pune",
+    "state": "Maharashtra",
+    "lat": 18.5091043,
+    "lng": 73.8062946,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJ2xNIcym_wjsRRn1jMfXqJ2E"
+  },
+  {
+    "storeCode": "A3/368",
+    "code": "A3",
+    "intent": "sell",
+    "name": "Cars24 - Sell Used Cars in Ahmedabad",
+    "address": "Ahmedabad, Ahmedabad, Ahmedabad, Gujarat",
+    "city": "Ahmedabad",
+    "state": "Gujarat",
+    "lat": 23.0496716,
+    "lng": 72.5018232,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJQz6kPtWbXjkReUW0AnqHz0I"
+  },
+  {
+    "storeCode": "00382139980869815202",
+    "code": "00382139980869815202",
+    "intent": "sell",
+    "name": "Cars24 Used Cars in Tamil Nadu",
+    "address": "1st Floor, Sunder Krishna Complex, 56-157, Thiru. Vika. Road, Near EA Mall, Chennai, Tamil Nadu",
+    "city": "Chennai",
+    "state": "Tamil Nadu",
+    "lat": 13.0613044,
+    "lng": 80.26528309999999,
+    "reviewUrl": "https://search.google.com/local/writereview?placeid=ChIJK7ru8mBnUjoR4BLFTYNtJ50"
   }
 ];
 </script>
   <script>
-    const allLocations = (window.CARS24_LOCATIONS || []).filter((x) => x.reviewUrl && Number.isFinite(x.lat) && Number.isFinite(x.lng));
+    // Set this to your deployed Google Apps Script /doPost URL to enable scan logging.
+    // Leave blank while testing; the review flow continues to work without tracking.
+    const TRACKING_ENDPOINT = window.CARS24_TRACKING_ENDPOINT || 'https://script.google.com/macros/s/AKfycbxnI7-qph5LIdr_hEB22awr3ZiGRSc1iryr34jJpbH0Q4Atln1s9E718dTLdKyanK1WMg/exec';
+    const excludedReviewUrls = new Set([
+      "https://search.google.com/local/writereview?placeid=ChIJ2V0t9SgVrjsRgyoEPG9Kprc",
+      "https://search.google.com/local/writereview?placeid=ChIJc6mtPPtnUjoRFq0kHJXx7kk",
+      "https://search.google.com/local/writereview?placeid=ChIJSbnvmtR1AjoR_5tZYVdtFkU",
+      "https://search.google.com/local/writereview?placeid=ChIJE4Ym7-wYDTkRR8E_HSPqu6U",
+      "https://search.google.com/local/writereview?placeid=ChIJJ748ymzJ5zsRcRzgWXB-hS8",
+      "https://search.google.com/local/writereview?placeid=ChIJ7xjpcyQLGToRPcFAqj_3w7Q",
+      "https://search.google.com/local/writereview?placeid=ChIJ36UQWV6_wjsRXrFCFvp8dPM",
+      "https://search.google.com/local/writereview?placeid=ChIJidAu1uGFXjkR3B7JEIe_LRQ",
+      "https://search.google.com/local/writereview?placeid=ChIJc3tqd5UDYzkRNMumxe-v_dU",
+      "https://search.google.com/local/writereview?placeid=ChIJK6jtcgBJpjsR7GC9S8tnWUA",
+      "https://search.google.com/local/writereview?placeid=ChIJGwqbPzuV3TsR5lkprJAjm-A",
+      "https://search.google.com/local/writereview?placeid=ChIJqSnDbQCj2zsRtPITc03YwdA",
+      "https://search.google.com/local/writereview?placeid=ChIJFUFsj77r3TsRpcwkjHW_vS4",
+      "https://search.google.com/local/writereview?placeid=ChIJYZ6O6XvH1DsRX_43wtaBzf0",
+      "https://search.google.com/local/writereview?placeid=ChIJQVux3vXJWTkR9M5B0KOLX_M",
+      "https://search.google.com/local/writereview?placeid=ChIJRQPB4RT9YjkRkUIYKhvBCGk",
+      "https://search.google.com/local/writereview?placeid=ChIJqSQHxJ6l1jsRS0c8arMz7Uo",
+      "https://search.google.com/local/writereview?placeid=ChIJHQ4cng7XyTsRkROORSDXDWI",
+      "https://search.google.com/local/writereview?placeid=ChIJeeH7ohx3AjoRVGAyf1bVkUQ",
+      "https://search.google.com/local/writereview?placeid=ChIJu03McYnB1DsRK_g_T3b2c6g",
+      "https://search.google.com/local/writereview?placeid=ChIJ1w0zZS_FADsRk3QMV4W2bDU",
+      "https://search.google.com/local/writereview?placeid=ChIJvbffvcKbbzkR81mchF06nNg",
+      "https://search.google.com/local/writereview?placeid=ChIJ601K8xEBwTsRnIV9erqDZVk",
+      "https://search.google.com/local/writereview?placeid=ChIJLwv7rmiDGjkR0hY_7KsaUs0",
+      "https://search.google.com/local/writereview?placeid=ChIJg1lAZ9vtDzkRdfacTXhX1Ow",
+      "https://search.google.com/local/writereview?placeid=ChIJkfO4Ik-JXDkRXa1jWERWc5Q"
+    ]);
+    const allLocations = (window.CARS24_LOCATIONS || []).filter((x) => x.reviewUrl && !excludedReviewUrls.has(x.reviewUrl) && Number.isFinite(x.lat) && Number.isFinite(x.lng));
     let locations = [];
     let intent = null;
     const branchSelect = document.querySelector('#branch');
@@ -6354,6 +6909,49 @@
     let visibleLocations = locations;
     let active = null;
     let locationRequested = false;
+    const scanEventId = (crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`);
+    let scanLogged = false;
+    let lastBranchLogged = '';
+
+    function sendTrackingEvent(eventType, data = {}) {
+      if (!TRACKING_ENDPOINT) return;
+      const payload = {
+        eventId: scanEventId,
+        eventType,
+        occurredAt: new Date().toISOString(),
+        page: window.location.href,
+        referrer: document.referrer || '',
+        intent: intent || '',
+        ...data
+      };
+      try {
+        const body = JSON.stringify(payload);
+        if (navigator.sendBeacon) {
+          const queued = navigator.sendBeacon(TRACKING_ENDPOINT, new Blob([body], { type: 'text/plain;charset=UTF-8' }));
+          if (queued) return;
+        }
+        fetch(TRACKING_ENDPOINT, { method: 'POST', body, keepalive: true, mode: 'no-cors' }).catch(() => {});
+      } catch (_) { /* Tracking must never interrupt the review flow. */ }
+    }
+
+    function logBranchEvent(eventType, item, position = null, coordinates = null) {
+      if (!item) return;
+      const branchKey = `${eventType}:${item.reviewUrl}:${position ?? ''}`;
+      if (eventType === 'branch_selected' && branchKey === lastBranchLogged) return;
+      if (eventType === 'branch_selected') lastBranchLogged = branchKey;
+      sendTrackingEvent(eventType, {
+        storeCode: item.storeCode || '',
+        code: item.code || '',
+        branchName: item.name || '',
+        city: item.city || '',
+        state: item.state || '',
+        branchLatitude: Number.isFinite(item.lat) ? item.lat : null,
+        branchLongitude: Number.isFinite(item.lng) ? item.lng : null,
+        userLatitude: coordinates?.latitude ?? null,
+        userLongitude: coordinates?.longitude ?? null,
+        distanceKm: position?.distanceKm ?? null
+      });
+    }
 
     function label(x) { return `${x.name} — ${x.city || x.state}`; }
     function renderOptions(items) {
@@ -6369,6 +6967,7 @@
       const qr = document.querySelector('#review-qr');
       qr.src = `https://api.qrserver.com/v1/create-qr-code/?size=720x720&margin=18&data=${encodeURIComponent(x.reviewUrl)}`;
       qr.alt = `Review QR code for ${x.name}`;
+      logBranchEvent('branch_selected', x);
     }
     function distanceKm(aLat, aLng, bLat, bLng) {
       const rad = Math.PI / 180;
@@ -6416,6 +7015,10 @@
           return;
         }
         showLocation(result.item);
+        logBranchEvent('nearest_location_detected', result.item, { distanceKm: result.distance }, {
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude
+        });
         status.textContent = `Nearest location found, approximately ${result.distance.toFixed(1)} km away. Please confirm it is the branch you visited.`;
       }, () => {
         status.textContent = 'Location permission was not available. Please search for your branch instead.';
@@ -6437,6 +7040,7 @@
       requestNearestLocation();
     });
     document.querySelector('#review').addEventListener('click', () => { if (active) window.location.href = active.reviewUrl; });
+    sendTrackingEvent('scan', { scanLoggedAt: new Date().toISOString() });
   </script>
 </body>
 </html>
