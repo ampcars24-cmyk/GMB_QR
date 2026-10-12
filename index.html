@@ -92,6 +92,18 @@
           <img id="review-qr" class="review-qr" alt="Selected Cars24 branch review QR code">
           <button id="review" class="primary" type="button">Continue to Google Reviews</button>
           <p class="small">Thank you for taking a moment to share your genuine experience.</p>
+          <section aria-labelledby="upload-title">
+            <h2 id="upload-title">Share your review screenshot (optional)</h2>
+            <p class="small">After reviewing on Google, return here to upload a screenshot. Please crop out unrelated personal information. It will be saved privately for the Cars24 team.</p>
+            <label for="collector-id">Collector ID / staff reference</label>
+            <input id="collector-id" maxlength="64" placeholder="For example, EMP123" autocomplete="off">
+            <button id="copy-collector-link" class="secondary" type="button">Copy collector review link</button>
+            <label for="review-screenshot">Your review screenshot</label>
+            <input id="review-screenshot" type="file" accept="image/jpeg,image/png,image/webp">
+            <p class="small">JPG, PNG or WebP, up to 2 MB. Uploading is optional and does not affect your review.</p>
+            <button id="upload-screenshot" class="secondary" type="button">Upload screenshot</button>
+            <p id="upload-status" class="status" role="status" aria-live="polite"></p>
+          </section>
         </div>
       </div>
     </section>
@@ -6869,6 +6881,7 @@
 </script>
   <script>
     const TRACKING_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxnI7-qph5LIdr_hEB22awr3ZiGRSc1iryr34jJpbH0Q4Atln1s9E718dTLdKyanK1WMg/exec';
+    let collectorId = (new URLSearchParams(window.location.search).get('collector_id') || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 64);
     const excludedReviewUrls = new Set([
       "https://search.google.com/local/writereview?placeid=ChIJ2V0t9SgVrjsRgyoEPG9Kprc",
       "https://search.google.com/local/writereview?placeid=ChIJc6mtPPtnUjoRFq0kHJXx7kk",
@@ -6908,11 +6921,22 @@
     let visibleLocations = locations;
     let active = null;
     let locationRequested = false;
+    let lastBranchPostback = '';
 
-    function sendScanPostback() {
+    function sendScanPostback(eventType = 'scan', item = null) {
       const payload = JSON.stringify({
         eventId: scanEventId,
-        eventType: 'scan',
+        eventType,
+        collectorId,
+        intent: intent || '',
+        storeCode: item?.storeCode || '',
+        code: item?.code || '',
+        branchName: item?.name || '',
+        city: item?.city || '',
+        state: item?.state || '',
+        branchLatitude: item?.lat ?? null,
+        branchLongitude: item?.lng ?? null,
+        reviewUrl: item?.reviewUrl || '',
         occurredAt: new Date().toISOString(),
         page: window.location.href,
         referrer: document.referrer || ''
@@ -6936,6 +6960,10 @@
       const qr = document.querySelector('#review-qr');
       qr.src = `https://api.qrserver.com/v1/create-qr-code/?size=720x720&margin=18&data=${encodeURIComponent(x.reviewUrl)}`;
       qr.alt = `Review QR code for ${x.name}`;
+      if (lastBranchPostback !== x.reviewUrl) {
+        lastBranchPostback = x.reviewUrl;
+        sendScanPostback('branch_selected', x);
+      }
     }
     function distanceKm(aLat, aLng, bLat, bLng) {
       const rad = Math.PI / 180;
@@ -6955,6 +6983,7 @@
 
     function setIntent(nextIntent) {
       intent = nextIntent;
+      active = null;
       locationRequested = false;
       locations = allLocations.filter(matchesIntent);
       document.querySelector('#buy-intent').classList.toggle('active', intent === 'buy');
@@ -7003,8 +7032,13 @@
       locationRequested = false;
       requestNearestLocation();
     });
-    document.querySelector('#review').addEventListener('click', () => { if (active) window.location.href = active.reviewUrl; });
+    document.querySelector('#review').addEventListener('click', () => {
+      if (!active) return;
+      sendScanPostback('review_link_opened', active);
+      window.open(active.reviewUrl, '_blank', 'noopener,noreferrer');
+    });
     sendScanPostback();
   </script>
+  <script src="review-uploads.js"></script>
 </body>
 </html>
